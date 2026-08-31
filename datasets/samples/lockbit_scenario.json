@@ -1,0 +1,97 @@
+[
+  {
+    "raw_id": null,
+    "source_type": "defender",
+    "data": {
+      "alert_id": "LB-01",
+      "event_type": "ThreatDetected",
+      "timestamp": "2026-08-31T11:30:49.291068",
+      "host_name": "HR-SRV-01",
+      "user_name": "CORP\\admin_backup",
+      "process_name": "lockbit3_payload.exe",
+      "process_path": "C:\\Windows\\Temp\\lockbit3_payload.exe",
+      "file_hash_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "severity": "High",
+      "description": "Unsigned high-entropy executable launched from Windows Temp directory.",
+      "mitre_tactics": [
+        "Execution"
+      ],
+      "mitre_techniques": [
+        "T1204.002"
+      ]
+    },
+    "ingested_at": "2026-08-31T12:30:49.291107"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "alert_id": "LB-02",
+      "EventID": 1,
+      "event_type": "ProcessCreate",
+      "timestamp": "2026-08-31T11:31:14.291068",
+      "host_name": "HR-SRV-01",
+      "user_name": "CORP\\admin_backup",
+      "process_name": "vssadmin.exe",
+      "process_command_line": "vssadmin.exe Delete Shadows /All /Quiet",
+      "parent_process_name": "lockbit3_payload.exe",
+      "severity": "Critical",
+      "description": "Volume Shadow Copies deleted via vssadmin to inhibit recovery.",
+      "mitre_tactics": [
+        "Impact",
+        "Defense Evasion"
+      ],
+      "mitre_techniques": [
+        "T1490"
+      ]
+    },
+    "ingested_at": "2026-08-31T12:30:49.291139"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "alert_id": "LB-03",
+      "EventID": 1,
+      "event_type": "ProcessCreate",
+      "timestamp": "2026-08-31T11:31:24.291068",
+      "host_name": "HR-SRV-01",
+      "user_name": "CORP\\admin_backup",
+      "process_name": "bcdedit.exe",
+      "process_command_line": "bcdedit /set {default} recoveryenabled No",
+      "parent_process_name": "lockbit3_payload.exe",
+      "severity": "Critical",
+      "description": "Windows boot recovery disabled by ransomware process.",
+      "mitre_tactics": [
+        "Impact"
+      ],
+      "mitre_techniques": [
+        "T1490"
+      ]
+    },
+    "ingested_at": "2026-08-31T12:30:49.291154"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "alert_id": "LB-04",
+      "EventID": 11,
+      "event_type": "FileCreate",
+      "timestamp": "2026-08-31T11:31:44.291068",
+      "host_name": "HR-SRV-01",
+      "user_name": "CORP\\admin_backup",
+      "TargetFilename": "C:\\Shares\\HR_Documents\\Restore-My-Files.txt",
+      "process_name": "lockbit3_payload.exe",
+      "severity": "Critical",
+      "description": "Bulk file modification and creation of Restore-My-Files.txt ransom note.",
+      "mitre_tactics": [
+        "Impact"
+      ],
+      "mitre_techniques": [
+        "T1486"
+      ]
+    },
+    "ingested_at": "2026-08-31T12:30:49.291166"
+  }
+]
