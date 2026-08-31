@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisSOC | Autonomous Multi-Agent Malware Triage & Alert Correlation</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cyberDark: '#0a0e17',
+            cyberCard: '#111927',
+            cyberCyan: '#00f0ff',
+            cyberGreen: '#00ff9d',
+            cyberRed: '#ff0055',
+            cyberPurple: '#a855f7',
+            cyberYellow: '#fbbf24'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- FontAwesome Icons & Charts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-[#0a0e17] text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Header / Navigation Bar -->
+  <header class="border-b border-slate-800 bg-[#0d131f]/90 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="h-10 w-10 rounded-lg bg-cyan-500/10 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-bold text-xl shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400">AEGIS<span class="text-white">SOC</span></span>
+          <span class="text-xs ml-2 px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 font-mono">v1.0 Multi-Agent</span>
+        </div>
+      </div>
+
+      <!-- Quick Status Badges -->
+      <div class="hidden md:flex items-center space-x-4 text-xs font-mono">
+        <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-slate-400">Orchestrator:</span>
+          <span class="text-emerald-400 font-semibold">StateGraph Active</span>
+        </div>
+        <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800">
+          <span class="text-slate-400">LLM Mode:</span>
+          <span class="text-cyan-400 font-semibold" id="headerLlmMode">Deterministic Cyber Reasoner</span>
+        </div>
+        <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800">
+          <span class="text-slate-400">Forensics:</span>
+          <span class="text-purple-400 font-semibold">PE + YARA v4.5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-8 text-sm font-medium border-t border-slate-800/60">
+      <button onclick="switchTab('triage')" id="tab-triage" class="tab-btn py-3 px-1 border-b-2 border-cyan-400 text-cyan-400 flex items-center space-x-2">
+        <i class="fa-solid fa-network-wired"></i> <span>Triage & Pipeline</span>
+      </button>
+      <button onclick="switchTab('incidents')" id="tab-incidents" class="tab-btn py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2">
+        <i class="fa-solid fa-circle-nodes"></i> <span>Incident Graph</span>
+      </button>
+      <button onclick="switchTab('malware')" id="tab-malware" class="tab-btn py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2">
+        <i class="fa-solid fa-microchip"></i> <span>Malware Forensics</span>
+      </button>
+      <button onclick="switchTab('reports')" id="tab-reports" class="tab-btn py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2">
+        <i class="fa-solid fa-file-shield"></i> <span>Incident Reports</span>
+      </button>
+      <button onclick="switchTab('benchmark')" id="tab-benchmark" class="tab-btn py-3 px-1 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2">
+        <i class="fa-solid fa-chart-line"></i> <span>Evaluation Benchmark</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ==================== TAB 1: TRIAGE & PIPELINE ==================== -->
+    <div id="view-triage" class="space-y-6">
+      
+      <!-- Top Control Bar -->
+      <div class="glass-panel p-5 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center space-x-4">
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Select Simulated Threat Scenario</label>
+            <select id="scenarioSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-400 font-mono">
+              <option value="mixed">Mixed Real-World Enterprise Stream (50 Alerts + Noise)</option>
+              <option value="apt29">APT29 (Cozy Bear) Spearphishing & C2 Intrusion</option>
+              <option value="lockbit">LockBit 3.0 Ransomware & Shadow Copy Deletion</option>
+              <option value="benign">Enterprise IT Background Noise (Benign Admin Tasks)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Noise Ingestion Ratio</label>
+            <select id="noiseSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-400 font-mono">
+              <option value="20">20 Alerts</option>
+              <option value="50" selected>50 Alerts</option>
+              <option value="100">100 Alerts</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button id="runPipelineBtn" onclick="executeTriagePipeline()" class="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-bold px-6 py-2.5 rounded-lg shadow-[0_0_20px_rgba(0,240,255,0.4)] flex items-center space-x-2 transition-all">
+            <i class="fa-solid fa-play"></i>
+            <span>Run Multi-Agent Triage</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Agent StateGraph Workflow Nodes -->
+      <div class="glass-panel p-6">
+        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-diagram-project text-cyan-400"></i>
+          <span>Multi-Agent StateGraph Pipeline Architecture</span>
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          
+          <!-- Node 1 -->
+          <div id="node-ingestion" class="agent-node bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-3 text-lg">
+              <i class="fa-solid fa-file-import"></i>
+            </div>
+            <div class="font-bold text-sm text-slate-200">1. Ingestion Agent</div>
+            <div class="text-xs text-slate-400 mt-1">Multi-Source Parser</div>
+            <div class="mt-3 text-[11px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800" id="stat-ingestion">IDLE</div>
+          </div>
+
+          <!-- Node 2 -->
+          <div id="node-correlation" class="agent-node bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 mb-3 text-lg">
+              <i class="fa-solid fa-object-group"></i>
+            </div>
+            <div class="font-bold text-sm text-slate-200">2. Correlation Agent</div>
+            <div class="text-xs text-slate-400 mt-1">Entity Graph Clustering</div>
+            <div class="mt-3 text-[11px] font-mono text-blue-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-800" id="stat-correlation">IDLE</div>
+          </div>
+
+          <!-- Node 3 -->
+          <div id="node-malware" class="agent-node bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 mb-3 text-lg">
+              <i class="fa-solid fa-virus"></i>
+            </div>
+            <div class="font-bold text-sm text-slate-200">3. Malware Agent</div>
+            <div class="text-xs text-slate-400 mt-1">PE & YARA Forensics</div>
+            <div class="mt-3 text-[11px] font-mono text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-800" id="stat-malware">IDLE</div>
+          </div>
+
+          <!-- Node 4 -->
+          <div id="node-threatintel" class="agent-node bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mb-3 text-lg">
+              <i class="fa-solid fa-crosshairs"></i>
+            </div>
+            <div class="font-bold text-sm text-slate-200">4. Threat Intel Agent</div>
+            <div class="text-xs text-slate-400 mt-1">MITRE ATT&CK & STIX2</div>
+            <div class="mt-3 text-[11px] font-mono text-purple-400 bg-purple-950/60 px-2 py-0.5 rounded border border-purple-800" id="stat-threatintel">IDLE</div>
+          </div>
+
+          <!-- Node 5 -->
+          <div id="node-reasoning" class="agent-node bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex flex-col items-center text-center">
+            <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-3 text-lg">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="font-bold text-sm text-slate-200">5. Reasoning Agent</div>
+            <div class="text-xs text-slate-400 mt-1">LLM Lead Investigator</div>
+            <div class="mt-3 text-[11px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800" id="stat-reasoning">IDLE</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Live Execution Log & Metrics Summary -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Live Agent Messages Trace -->
+        <div class="lg:col-span-2 glass-panel p-5 flex flex-col h-[400px]">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-comments text-cyan-400"></i>
+              <span>Agent Message Bus & Execution Trace</span>
+            </h4>
+            <span class="text-xs text-slate-500 font-mono" id="msgCountBadge">0 messages</span>
+          </div>
+          <div id="agentMessageLog" class="flex-1 overflow-y-auto space-y-3 pt-3 pr-2 font-mono text-xs text-slate-300">
+            <div class="text-slate-500 italic">Select a threat scenario and click 'Run Multi-Agent Triage' to launch the investigation...</div>
+          </div>
+        </div>
+
+        <!-- Quick Summary Metrics -->
+        <div class="glass-panel p-5 flex flex-col justify-between h-[400px]">
+          <div>
+            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider pb-3 border-b border-slate-800 mb-4 flex items-center space-x-2">
+              <i class="fa-solid fa-gauge-high text-emerald-400"></i>
+              <span>Pipeline Quick Metrics</span>
+            </h4>
+            
+            <div class="space-y-4">
+              <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-lg border border-slate-800">
+                <span class="text-slate-400 text-xs">Raw Alerts Ingested:</span>
+                <span class="text-lg font-bold text-white font-mono" id="quickRawAlerts">0</span>
+              </div>
+              <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-lg border border-slate-800">
+                <span class="text-slate-400 text-xs">Incidents Synthesized:</span>
+                <span class="text-lg font-bold text-cyan-400 font-mono" id="quickIncidents">0</span>
+              </div>
+              <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-lg border border-slate-800">
+                <span class="text-slate-400 text-xs">Alert Fatigue Reduction:</span>
+                <span class="text-lg font-bold text-emerald-400 font-mono" id="quickCompression">0.0%</span>
+              </div>
+              <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-lg border border-slate-800">
+                <span class="text-slate-400 text-xs">Total Pipeline Latency:</span>
+                <span class="text-lg font-bold text-purple-400 font-mono" id="quickLatency">0.0 ms</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 flex justify-between items-center">
+            <span class="text-xs text-slate-400">Report Status:</span>
+            <span class="px-2.5 py-1 rounded text-xs font-bold font-mono bg-slate-800 text-slate-400" id="quickReportStatus">STANDBY</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================== TAB 2: INCIDENT GRAPH ==================== -->
+    <div id="view-incidents" class="space-y-6 hidden">
+      <div class="glass-panel p-5">
+        <h3 class="text-base font-bold text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-circle-nodes text-cyan-400"></i>
+          <span>Correlated Incident Entity Graph & Timeline</span>
+        </h3>
+        <p class="text-xs text-slate-400 mb-4">Interactive bipartite visualization of relationships between Hosts, Users, Suspicious Hashes, Processes, and External C2 Network connections.</p>
+        
+        <!-- Vis.js Graph Canvas -->
+        <div id="incidentNetworkGraph" class="h-[450px] w-full bg-slate-950/80 rounded-xl border border-slate-800"></div>
+      </div>
+
+      <!-- Incident Cluster Cards -->
+      <div id="incidentClusterList" class="space-y-4">
+        <div class="text-slate-500 text-sm italic">No incidents correlated yet. Run the triage pipeline first.</div>
+      </div>
+    </div>
+
+
+    <!-- ==================== TAB 3: MALWARE FORENSICS ==================== -->
+    <div id="view-malware" class="space-y-6 hidden">
+      
+      <!-- Malware Upload & Sample Analysis Form -->
+      <div class="glass-panel p-5">
+        <h3 class="text-base font-bold text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-microchip text-rose-400"></i>
+          <span>Static Binary Analysis & YARA Rule Matching Lab</span>
+        </h3>
+        <p class="text-xs text-slate-400 mb-4">Analyze PE headers, section entropy, suspicious imports, and live YARA signatures on suspicious executables.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-xs uppercase text-slate-400 font-semibold mb-1">Target Binary / Hash</label>
+            <input type="text" id="malwareInputHash" value="4a7d1ed414474e4033ac29ccb8653d9b4b60fd33ac79d3434685ff86a59963be" placeholder="SHA256 Hash or Binary Name" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 font-mono focus:outline-none focus:border-cyan-400">
+          </div>
+          <div>
+            <label class="block text-xs uppercase text-slate-400 font-semibold mb-1">Action</label>
+            <button onclick="runSampleMalwareAnalysis()" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-2 rounded-lg transition-all flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-flask"></i> <span>Inspect Binary Artifact</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Malware Report Details -->
+      <div id="malwareResultsContainer" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-3 text-slate-500 text-sm italic">Run malware analysis or trigger the triage pipeline to view binary forensics.</div>
+      </div>
+
+    </div>
+
+
+    <!-- ==================== TAB 4: INCIDENT REPORTS ==================== -->
+    <div id="view-reports" class="space-y-6 hidden">
+      <div id="incidentReportsContainer" class="space-y-6">
+        <div class="text-slate-500 text-sm italic">No synthesized incident reports available yet. Run the triage pipeline first.</div>
+      </div>
+    </div>
+
+
+    <!-- ==================== TAB 5: BENCHMARK EVALUATION ==================== -->
+    <div id="view-benchmark" class="space-y-6 hidden">
+      
+      <!-- Benchmark Controls -->
+      <div class="glass-panel p-5 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="text-base font-bold text-white mb-1 flex items-center space-x-2">
+            <i class="fa-solid fa-chart-line text-cyan-400"></i>
+            <span>Automated Comparative Benchmark Suite</span>
+          </h3>
+          <p class="text-xs text-slate-400">Evaluates Aegis Multi-Agent System against Single-LLM Direct Prompt and Rule-Based SIEM Baselines.</p>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <select id="benchmarkDatasetSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 font-mono">
+            <option value="mixed">Mixed Stream (50 Alerts, 60% Noise)</option>
+            <option value="apt29">APT29 Cyber Espionage Stream</option>
+            <option value="lockbit">LockBit 3.0 Ransomware Stream</option>
+            <option value="benign">High-Volume Benign Noise (50 Alerts)</option>
+          </select>
+          <button id="runBenchmarkBtn" onclick="executeBenchmark()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold px-6 py-2 rounded-lg shadow-lg flex items-center space-x-2">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Run Benchmark</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Benchmark Metric Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="benchmarkMetricCards">
+        <!-- Multi-Agent Card -->
+        <div class="glass-panel p-5 border-emerald-500/40">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <span class="font-bold text-emerald-400 text-sm">Aegis Multi-Agent</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono font-bold">PROPOSED</span>
+          </div>
+          <div class="mt-4 space-y-3 text-sm font-mono">
+            <div class="flex justify-between"><span class="text-slate-400">F1-Score:</span><span class="text-white font-bold" id="bm-ma-f1">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Precision:</span><span class="text-emerald-400" id="bm-ma-prec">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Recall:</span><span class="text-emerald-400" id="bm-ma-rec">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">FP Reduction:</span><span class="text-cyan-400 font-bold" id="bm-ma-fp">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Alert Compression:</span><span class="text-cyan-400" id="bm-ma-comp">--</span></div>
+          </div>
+        </div>
+
+        <!-- Single-LLM Card -->
+        <div class="glass-panel p-5 border-yellow-500/40">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <span class="font-bold text-yellow-400 text-sm">Single-LLM Direct</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-yellow-950 text-yellow-300 font-mono">BASELINE 1</span>
+          </div>
+          <div class="mt-4 space-y-3 text-sm font-mono">
+            <div class="flex justify-between"><span class="text-slate-400">F1-Score:</span><span class="text-white font-bold" id="bm-sl-f1">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Precision:</span><span class="text-yellow-400" id="bm-sl-prec">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Recall:</span><span class="text-yellow-400" id="bm-sl-rec">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">FP Reduction:</span><span class="text-yellow-400 font-bold" id="bm-sl-fp">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Alert Compression:</span><span class="text-yellow-400" id="bm-sl-comp">--</span></div>
+          </div>
+        </div>
+
+        <!-- Rule-Based SIEM Card -->
+        <div class="glass-panel p-5 border-cyan-500/40">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <span class="font-bold text-cyan-400 text-sm">Rule-Based SIEM</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">BASELINE 2</span>
+          </div>
+          <div class="mt-4 space-y-3 text-sm font-mono">
+            <div class="flex justify-between"><span class="text-slate-400">F1-Score:</span><span class="text-white font-bold" id="bm-rb-f1">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Precision:</span><span class="text-cyan-400" id="bm-rb-prec">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Recall:</span><span class="text-cyan-400" id="bm-rb-rec">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">FP Reduction:</span><span class="text-cyan-400 font-bold" id="bm-rb-fp">--</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Alert Compression:</span><span class="text-cyan-400" id="bm-rb-comp">--</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparative Bar Chart -->
+      <div class="glass-panel p-5">
+        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Comparative Evaluation Metrics Chart</h4>
+        <div class="h-[350px]">
+          <canvas id="benchmarkChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
