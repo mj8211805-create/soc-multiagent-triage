@@ -1,0 +1,360 @@
+[
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "DC-PRIMARY-01",
+      "user_name": "CORP\\svc_backup",
+      "process_name": "wbadmin.exe",
+      "process_command_line": "wbadmin.exe start systemstatebackup -backupTarget:\\\\BACKUP-NAS\\Daily",
+      "severity": "Low",
+      "description": "Authorized routine scheduled system state backup.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-001",
+      "timestamp": "2026-08-31T10:24:56.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292670"
+  },
+  {
+    "raw_id": null,
+    "source_type": "suricata",
+    "data": {
+      "source_type": "suricata",
+      "event_type": "Alert",
+      "host_name": "DMZ-WEB-01",
+      "src_ip": "10.0.100.50",
+      "dst_ip": "10.0.1.10",
+      "src_port": 54120,
+      "dst_port": 80,
+      "signature": "ET SCAN Vulnerability Scanner Probe (Nessus/Qualys)",
+      "severity": "Low",
+      "description": "Scheduled internal vulnerability scan probe detected from authorized scanner IP.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-002",
+      "timestamp": "2026-08-31T11:05:10.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292713"
+  },
+  {
+    "raw_id": null,
+    "source_type": "defender",
+    "data": {
+      "source_type": "defender",
+      "event_type": "ScanCompleted",
+      "host_name": "ENG-WORKSTATION-08",
+      "user_name": "NT AUTHORITY\\SYSTEM",
+      "process_name": "MsMpEng.exe",
+      "severity": "Informational",
+      "description": "Windows Defender routine daily quick scan completed. 0 threats found.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-003",
+      "timestamp": "2026-08-31T10:37:10.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292738"
+  },
+  {
+    "raw_id": null,
+    "source_type": "defender",
+    "data": {
+      "source_type": "defender",
+      "event_type": "ScanCompleted",
+      "host_name": "ENG-WORKSTATION-08",
+      "user_name": "NT AUTHORITY\\SYSTEM",
+      "process_name": "MsMpEng.exe",
+      "severity": "Informational",
+      "description": "Windows Defender routine daily quick scan completed. 0 threats found.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-004",
+      "timestamp": "2026-08-31T10:05:12.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292759"
+  },
+  {
+    "raw_id": null,
+    "source_type": "defender",
+    "data": {
+      "source_type": "defender",
+      "event_type": "ScanCompleted",
+      "host_name": "ENG-WORKSTATION-08",
+      "user_name": "NT AUTHORITY\\SYSTEM",
+      "process_name": "MsMpEng.exe",
+      "severity": "Informational",
+      "description": "Windows Defender routine daily quick scan completed. 0 threats found.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-005",
+      "timestamp": "2026-08-31T09:44:27.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292777"
+  },
+  {
+    "raw_id": null,
+    "source_type": "suricata",
+    "data": {
+      "source_type": "suricata",
+      "event_type": "Alert",
+      "host_name": "DMZ-WEB-01",
+      "src_ip": "10.0.100.50",
+      "dst_ip": "10.0.1.10",
+      "src_port": 54120,
+      "dst_port": 80,
+      "signature": "ET SCAN Vulnerability Scanner Probe (Nessus/Qualys)",
+      "severity": "Low",
+      "description": "Scheduled internal vulnerability scan probe detected from authorized scanner IP.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-006",
+      "timestamp": "2026-08-31T11:08:28.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292799"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "DC-PRIMARY-01",
+      "user_name": "CORP\\svc_backup",
+      "process_name": "wbadmin.exe",
+      "process_command_line": "wbadmin.exe start systemstatebackup -backupTarget:\\\\BACKUP-NAS\\Daily",
+      "severity": "Low",
+      "description": "Authorized routine scheduled system state backup.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-007",
+      "timestamp": "2026-08-31T11:13:40.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292819"
+  },
+  {
+    "raw_id": null,
+    "source_type": "defender",
+    "data": {
+      "source_type": "defender",
+      "event_type": "ScanCompleted",
+      "host_name": "ENG-WORKSTATION-08",
+      "user_name": "NT AUTHORITY\\SYSTEM",
+      "process_name": "MsMpEng.exe",
+      "severity": "Informational",
+      "description": "Windows Defender routine daily quick scan completed. 0 threats found.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-008",
+      "timestamp": "2026-08-31T09:44:44.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292845"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "DC-PRIMARY-01",
+      "user_name": "CORP\\svc_backup",
+      "process_name": "wbadmin.exe",
+      "process_command_line": "wbadmin.exe start systemstatebackup -backupTarget:\\\\BACKUP-NAS\\Daily",
+      "severity": "Low",
+      "description": "Authorized routine scheduled system state backup.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-009",
+      "timestamp": "2026-08-31T10:34:26.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292855"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "IT-MGMT-02",
+      "user_name": "CORP\\admin_jake",
+      "process_name": "gpupdate.exe",
+      "process_command_line": "gpupdate.exe /force",
+      "severity": "Informational",
+      "description": "Group Policy force refresh executed by sysadmin.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-010",
+      "timestamp": "2026-08-31T09:45:15.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292862"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "DEV-LAPTOP-12",
+      "user_name": "CORP\\alex.dev",
+      "process_name": "powershell.exe",
+      "process_command_line": "powershell.exe -Command Get-Service | Where-Object {$_.Status -eq 'Running'}",
+      "severity": "Informational",
+      "description": "Developer running standard PowerShell service query.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-011",
+      "timestamp": "2026-08-31T10:31:48.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292869"
+  },
+  {
+    "raw_id": null,
+    "source_type": "defender",
+    "data": {
+      "source_type": "defender",
+      "event_type": "ScanCompleted",
+      "host_name": "ENG-WORKSTATION-08",
+      "user_name": "NT AUTHORITY\\SYSTEM",
+      "process_name": "MsMpEng.exe",
+      "severity": "Informational",
+      "description": "Windows Defender routine daily quick scan completed. 0 threats found.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-012",
+      "timestamp": "2026-08-31T10:33:26.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292876"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "IT-MGMT-02",
+      "user_name": "CORP\\admin_jake",
+      "process_name": "gpupdate.exe",
+      "process_command_line": "gpupdate.exe /force",
+      "severity": "Informational",
+      "description": "Group Policy force refresh executed by sysadmin.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-013",
+      "timestamp": "2026-08-31T09:33:41.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292883"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "IT-MGMT-02",
+      "user_name": "CORP\\admin_jake",
+      "process_name": "gpupdate.exe",
+      "process_command_line": "gpupdate.exe /force",
+      "severity": "Informational",
+      "description": "Group Policy force refresh executed by sysadmin.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-014",
+      "timestamp": "2026-08-31T10:52:23.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292891"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "DEV-LAPTOP-12",
+      "user_name": "CORP\\alex.dev",
+      "process_name": "powershell.exe",
+      "process_command_line": "powershell.exe -Command Get-Service | Where-Object {$_.Status -eq 'Running'}",
+      "severity": "Informational",
+      "description": "Developer running standard PowerShell service query.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-015",
+      "timestamp": "2026-08-31T11:14:33.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292898"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "IT-MGMT-02",
+      "user_name": "CORP\\admin_jake",
+      "process_name": "gpupdate.exe",
+      "process_command_line": "gpupdate.exe /force",
+      "severity": "Informational",
+      "description": "Group Policy force refresh executed by sysadmin.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-016",
+      "timestamp": "2026-08-31T10:55:05.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292904"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "IT-MGMT-02",
+      "user_name": "CORP\\admin_jake",
+      "process_name": "gpupdate.exe",
+      "process_command_line": "gpupdate.exe /force",
+      "severity": "Informational",
+      "description": "Group Policy force refresh executed by sysadmin.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-017",
+      "timestamp": "2026-08-31T11:20:59.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292911"
+  },
+  {
+    "raw_id": null,
+    "source_type": "defender",
+    "data": {
+      "source_type": "defender",
+      "event_type": "ScanCompleted",
+      "host_name": "ENG-WORKSTATION-08",
+      "user_name": "NT AUTHORITY\\SYSTEM",
+      "process_name": "MsMpEng.exe",
+      "severity": "Informational",
+      "description": "Windows Defender routine daily quick scan completed. 0 threats found.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-018",
+      "timestamp": "2026-08-31T10:11:48.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292919"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "IT-MGMT-02",
+      "user_name": "CORP\\admin_jake",
+      "process_name": "gpupdate.exe",
+      "process_command_line": "gpupdate.exe /force",
+      "severity": "Informational",
+      "description": "Group Policy force refresh executed by sysadmin.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-019",
+      "timestamp": "2026-08-31T09:49:05.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292925"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "source_type": "sysmon",
+      "event_type": "ProcessCreate",
+      "host_name": "IT-MGMT-02",
+      "user_name": "CORP\\admin_jake",
+      "process_name": "gpupdate.exe",
+      "process_command_line": "gpupdate.exe /force",
+      "severity": "Informational",
+      "description": "Group Policy force refresh executed by sysadmin.",
+      "mitre_tactics": [],
+      "alert_id": "BENIGN-020",
+      "timestamp": "2026-08-31T09:37:05.292562"
+    },
+    "ingested_at": "2026-08-31T12:30:49.292932"
+  }
+]
